@@ -1,0 +1,83 @@
+{
+  "name": "Report to Synthesis Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "={{ $env.REPORTS_FOLDER || './reports' }}",
+        "events": ["add"],
+        "includeInOutput": true
+      },
+      "name": "Watch Reports Folder",
+      "type": "n8n-nodes-base.localFileTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.fileName }}",
+              "operation": "endsWith",
+              "value2": ".pdf"
+            }
+          ]
+        }
+      },
+      "name": "Is PDF?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "command": "={{ 'cd ' + ($env.PROJECT_DIR || '/path/to/report-to-synthesis') + ' && python pipeline.py \"' + $json.path + '\"' }}"
+      },
+      "name": "Run Pipeline",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [680, 200]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "status",
+              "value": "success"
+            },
+            {
+              "name": "file",
+              "value": "={{ $('Watch Reports Folder').item.json.fileName }}"
+            },
+            {
+              "name": "output",
+              "value": "={{ $json.stdout }}"
+            }
+          ]
+        }
+      },
+      "name": "Format Result",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [900, 200]
+    }
+  ],
+  "connections": {
+    "Watch Reports Folder": {
+      "main": [[{"node": "Is PDF?", "type": "main", "index": 0}]]
+    },
+    "Is PDF?": {
+      "main": [[{"node": "Run Pipeline", "type": "main", "index": 0}]]
+    },
+    "Run Pipeline": {
+      "main": [[{"node": "Format Result", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "_comment": "Setup: 1) Set REPORTS_FOLDER env var to your reports/ path. 2) Set PROJECT_DIR env var to the root of this project. 3) Make sure python and pip deps are installed. 4) Import this file into n8n via Workflows > Import."
+}

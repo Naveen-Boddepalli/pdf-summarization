@@ -1,0 +1,6 @@
+crewai
+pymupdf
+python-dotenv
+tabulate
+matplotlib
+pandas
