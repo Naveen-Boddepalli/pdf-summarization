@@ -5,14 +5,18 @@ Turns any PDF report (100s of pages) into:
 - `visuals/figures.md` — all charts described with markdown tables
 - `visuals/chart_*.png` — auto-generated chart images from extracted data
 
-**100% free** — uses Gemini 1.5 Flash (free tier) + open-source Python libs.
+**100% free** — use any local model or online model (with api key) + open-source Python libs.
 
 ---
 
 ## Quickstart
 
 ### 1. Get a free Gemini API key
-Go to https://aistudio.google.com → sign in → "Get API key" → copy it.
+Go to https://aistudio.google.com → sign in → "Get API key" → copy it. (change the function as per the model)
+
+or 
+
+add the model running on your local machine.
 
 ### 2. Install dependencies
 ```bash
@@ -103,6 +107,7 @@ To auto-trigger on new files:
 ## Tips for large reports (200+ pages)
 
 - Gemini 1.5 Flash handles up to 1 million tokens — most reports fit in one call
+- OR your local model can handle it as we will make it into chunks as per model
 - The pipeline chunks automatically so nothing gets cut off
 - For very large reports, expect 5-10 minutes total runtime
 - All API calls are within Gemini's free tier (1500 requests/day)
@@ -112,7 +117,7 @@ To auto-trigger on new files:
 ## Costs
 
 **Zero.** Everything used here is free:
-- Gemini 1.5 Flash: free tier (15 req/min, 1500 req/day)
+- Gemini 1.5 Flash: free tier (15 req/min, 1500 req/day) or Groq API
 - PyMuPDF: open source
 - CrewAI: open source
 - matplotlib / pandas: open source
